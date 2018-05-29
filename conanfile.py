@@ -12,6 +12,7 @@ class CAFConan(ConanFile):
     description = "An open source implementation of the Actor Model in C++"
     url = "https://github.com/bincrafters/conan-caf"
     homepage = "https://github.com/actor-framework/actor-framework"
+    author = "Bincrafters <bincrafters@gmail.com>"
     license = "BSD-3-Clause, BSL-1.0"
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt"]
@@ -20,7 +21,7 @@ class CAFConan(ConanFile):
     build_subfolder = "build_subfolder"
     settings = "os", "compiler", "build_type", "arch"
     options = {
-        "shared": [True, False], 
+        "shared": [True, False],
         "log_level": ["NONE", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"]
    }
     default_options = "shared=False", "log_level=NONE"
@@ -32,7 +33,7 @@ class CAFConan(ConanFile):
         download_url = project_url + archive_path + self.version + archive_ext
         tools.get(download_url)
         os.rename("actor-framework-" + self.version, self.source_subfolder)
-        
+
     def configure(self):
         if self.settings.compiler == "gcc":
             if str(self.settings.compiler.version) < "4.8":
@@ -68,9 +69,9 @@ class CAFConan(ConanFile):
         cmake = CMake(self)
         cmake.configure(build_dir=self.build_subfolder)
         cmake.install()
-        
+
         self.copy("LICENSE*", dst="licenses", src=self.source_subfolder)
-        
+
         # Only headers are copied by cmake.install()
         self.copy("*.dylib",  dst="lib", keep_path=False)
         self.copy("*.so",     dst="lib", keep_path=False)
@@ -81,7 +82,7 @@ class CAFConan(ConanFile):
 
     def package_info(self):
         tools.collect_libs(self)
-        
+
         if self.options.shared:
             self.cpp_info.libs.extend(["caf_io", "caf_core"])
         if not self.options.shared:
@@ -93,4 +94,3 @@ class CAFConan(ConanFile):
                 self.cpp_info.libs.append('iphlpapi')
         elif self.settings.os == "Linux":
             self.cpp_info.libs.append('pthread')
-
