@@ -9,7 +9,7 @@ from conans.model.version import Version
 
 class CAFConan(ConanFile):
     name = "caf"
-    version = "0.15.7"
+    version = "0.16.0"
     description = "An open source implementation of the Actor Model in C++"
     url = "https://github.com/bincrafters/conan-caf"
     homepage = "https://github.com/actor-framework/actor-framework"
@@ -48,7 +48,7 @@ class CAFConan(ConanFile):
         cmake = CMake(self)
         cmake.parallel = True
         cmake.definitions["CMAKE_CXX_STANDARD"] = "11"
-        if self.settings.compiler=="Visual Studio" or self.settings.arch == "x86":
+        if self.settings.compiler == "Visual Studio" or self.settings.arch == "x86":
             cmake.definitions["CAF_NO_OPENSSL"] = "ON"
         for define in ["CAF_NO_EXAMPLES", "CAF_NO_TOOLS", "CAF_NO_UNIT_TESTS", "CAF_NO_PYTHON"]:
             cmake.definitions[define] = "ON"
@@ -89,7 +89,7 @@ class CAFConan(ConanFile):
         if not self.options.shared:
             self.cpp_info.libs.extend(["caf_io_static", "caf_core_static"])
 
-        if self.settings.compiler=="Visual Studio":
+        if self.settings.compiler == "Visual Studio":
             if not self.options.shared:
                 self.cpp_info.libs.append('ws2_32')
                 self.cpp_info.libs.append('iphlpapi')
