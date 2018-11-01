@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <string>
 #include <iostream>
 #include <chrono>
@@ -38,4 +39,5 @@ int main() {
   // create another actor that calls 'hello_world(mirror_actor)';
   system.spawn(hello_world, mirror_actor);
   // system will wait until both actors are destroyed before leaving main
+  return EXIT_SUCCESS;
 }
