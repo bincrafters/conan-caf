@@ -31,7 +31,7 @@ class CAFConan(ConanFile):
 
     @property
     def _is_static(self):
-        return 'shared' in self.options.values.keys() and not self.options.shared
+        return 'shared' not in self.options.values.keys() or not self.options.shared
 
     @property
     def _has_openssl(self):
