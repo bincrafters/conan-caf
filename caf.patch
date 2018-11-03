@@ -1,0 +1,27 @@
+diff --git a/libcaf_core/CMakeLists.txt b/libcaf_core/CMakeLists.txt
+index c179040..82daab6 100644
+--- a/libcaf_core/CMakeLists.txt
++++ b/libcaf_core/CMakeLists.txt
+@@ -141,10 +141,12 @@ list(APPEND LIBCAF_CORE_HDRS
+ 
+ add_custom_target(libcaf_core)
+ 
++find_package (Threads)
++
+ # build shared library if not compiling static only
+ if (NOT CAF_BUILD_STATIC_ONLY)
+   add_library(libcaf_core_shared SHARED ${LIBCAF_CORE_SRCS} ${LIBCAF_CORE_HDRS})
+-  target_link_libraries(libcaf_core_shared ${CAF_EXTRA_LDFLAGS})
++  target_link_libraries(libcaf_core_shared ${CAF_EXTRA_LDFLAGS} ${CMAKE_THREAD_LIBS_INIT})
+   target_include_directories(libcaf_core_shared PUBLIC
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+@@ -166,7 +168,7 @@ endif ()
+ # build static library only if --build-static or --build-static-only was set
+ if (CAF_BUILD_STATIC_ONLY OR CAF_BUILD_STATIC)
+   add_library(libcaf_core_static STATIC ${LIBCAF_CORE_HDRS} ${LIBCAF_CORE_SRCS})
+-  target_link_libraries(libcaf_core_static ${CAF_EXTRA_LDFLAGS})
++  target_link_libraries(libcaf_core_static ${CAF_EXTRA_LDFLAGS} ${CMAKE_THREAD_LIBS_INIT})
+   target_include_directories(libcaf_core_static PUBLIC
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

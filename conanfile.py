@@ -17,7 +17,7 @@ class CAFConan(ConanFile):
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "BSD-3-Clause, BSL-1.0"
     exports = ["LICENSE.md"]
-    exports_sources = ["CMakeLists.txt"]
+    exports_sources = ["CMakeLists.txt", "caf.patch"]
     generators = ["cmake"]
     settings = "os", "compiler", "build_type", "arch"
     options = {
@@ -63,6 +63,7 @@ class CAFConan(ConanFile):
         cmake = CMake(self)
         cmake.parallel = True
         cmake.definitions["CMAKE_CXX_STANDARD"] = "11"
+        cmake.definitions["CAF_NO_AUTO_LIBCPP"] = True
         cmake.definitions["CAF_NO_OPENSSL"] = not self._has_openssl
         for define in ["CAF_NO_EXAMPLES", "CAF_NO_TOOLS", "CAF_NO_UNIT_TESTS", "CAF_NO_PYTHON"]:
             cmake.definitions[define] = "ON"
@@ -75,6 +76,7 @@ class CAFConan(ConanFile):
         return cmake
 
     def build(self):
+        tools.patch(base_path=self._source_subfolder, patch_file="caf.patch")
         cmake = self._cmake_configure()
         cmake.build()
 
