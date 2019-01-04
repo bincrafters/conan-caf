@@ -9,7 +9,7 @@ from conans.model.version import Version
 
 class CAFConan(ConanFile):
     name = "caf"
-    version = "0.16.1"
+    version = "0.16.3"
     description = "An open source implementation of the Actor Model in C++"
     url = "https://github.com/bincrafters/conan-caf"
     homepage = "https://github.com/actor-framework/actor-framework"
@@ -22,10 +22,11 @@ class CAFConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {
         "shared": [True, False],
+        "fPIC": [True, False],
         "log_level": ["ERROR", "WARNING", "INFO", "DEBUG", "TRACE", "NONE"],
         "openssl": [True, False]
     }
-    default_options = {"shared": False, "log_level": "NONE", "openssl": True}
+    default_options = {"shared": False, "fPIC": True, "log_level": "NONE", "openssl": True}
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
 
@@ -38,9 +39,11 @@ class CAFConan(ConanFile):
         return 'openssl' in self.options.values.keys() and self.options.openssl
 
     def config_options(self):
-        if self.settings.os == "Windows" or self.settings.arch == "x86":
-            del self.options.shared
-            del self.options.openssl
+        if self.settings.os == "Windows":
+            del self.options.fPIC
+            if self.settings.arch == "x86":
+                del self.options.shared
+                del self.options.openssl
 
     def source(self):
         tools.get("{}/archive/{}.tar.gz".format(self.homepage, self.version))
@@ -48,7 +51,7 @@ class CAFConan(ConanFile):
 
     def requirements(self):
         if self._has_openssl:
-            self.requires("OpenSSL/1.0.2o@conan/stable")
+            self.requires("OpenSSL/1.0.2q@conan/stable")
 
     def configure(self):
         if self.settings.compiler == "gcc":
