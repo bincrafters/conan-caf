@@ -51,7 +51,7 @@ class CAFConan(ConanFile):
 
     def requirements(self):
         if self._has_openssl:
-            self.requires("OpenSSL/1.0.2q@conan/stable")
+            self.requires("OpenSSL/1.0.2o@conan/stable")
 
     def configure(self):
         if self.settings.compiler == "gcc":
