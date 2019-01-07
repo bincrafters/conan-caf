@@ -1,11 +1,13 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cb6a7f3..21a1884 100644
+index cb6a7f3..be399e2 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -509,16 +509,7 @@ if(NOT CAF_NO_OPENSSL)
+@@ -507,24 +507,15 @@ if(NOT CAF_NO_OPENSSL)
+     else()
+       if(NOT CMAKE_CROSSCOMPILING)
          # Check if openssl headers and library versions match
-         set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
-         set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
+-        set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
+-        set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
 -        check_c_source_runs("
 -          #include <openssl/opensslv.h>
 -          #include <openssl/crypto.h>
@@ -16,10 +18,19 @@ index cb6a7f3..21a1884 100644
 -            return -1;
 -          }
 -        " OPENSSL_CORRECT_VERSION_NUMBER)
++        set(CMAKE_REQUIRED_LIBRARIES ${CONAN_INCLUDE_DIRS_OPENSSL})
++        set(CMAKE_REQUIRED_INCLUDES ${CONAN_LIBS_OPENSSL})
 +	set(OPENSSL_CORRECT_VERSION_NUMBER TRUE)
          if (NOT OPENSSL_CORRECT_VERSION_NUMBER)
            message(FATAL_ERROR
              "OpenSSL library version does not match headers")
+         endif()
+       endif()
+-      include_directories(BEFORE ${OPENSSL_INCLUDE_DIR})
++      include_directories(BEFORE ${CONAN_INCLUDE_DIRS_OPENSSL})
+       add_optional_caf_lib(openssl)
+     endif()
+   else(OPENSSL_FOUND)
 diff --git a/libcaf_core/CMakeLists.txt b/libcaf_core/CMakeLists.txt
 index 15ef0e0..300c9a5 100644
 --- a/libcaf_core/CMakeLists.txt
