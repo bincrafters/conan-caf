@@ -1,18 +1,33 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cb6a7f3..8221b9e 100644
+index cb6a7f3..d0924fe 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -507,8 +507,8 @@ if(NOT CAF_NO_OPENSSL)
+@@ -505,25 +505,6 @@ if(NOT CAF_NO_OPENSSL)
+               "Disable OpenSSL. Required >= 1.0.1 due to TLSv1.2 support.")
+       set(CAF_NO_OPENSSL yes)
      else()
-       if(NOT CMAKE_CROSSCOMPILING)
-         # Check if openssl headers and library versions match
+-      if(NOT CMAKE_CROSSCOMPILING)
+-        # Check if openssl headers and library versions match
 -        set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
 -        set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
-+	set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES} ${CONAN_LIBS_OPENSSL})
-+	set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR} ${CONAN_INCLUDE_DIRS_OPENSSL})
-         check_c_source_runs("
-           #include <openssl/opensslv.h>
-           #include <openssl/crypto.h>
+-        check_c_source_runs("
+-          #include <openssl/opensslv.h>
+-          #include <openssl/crypto.h>
+-          int main() {
+-            if (SSLeay() == OPENSSL_VERSION_NUMBER) {
+-              return 0;
+-            }
+-            return -1;
+-          }
+-        " OPENSSL_CORRECT_VERSION_NUMBER)
+-        if (NOT OPENSSL_CORRECT_VERSION_NUMBER)
+-          message(FATAL_ERROR
+-            "OpenSSL library version does not match headers")
+-        endif()
+-      endif()
+       include_directories(BEFORE ${OPENSSL_INCLUDE_DIR})
+       add_optional_caf_lib(openssl)
+     endif()
 diff --git a/libcaf_core/CMakeLists.txt b/libcaf_core/CMakeLists.txt
 index 15ef0e0..15ece56 100644
 --- a/libcaf_core/CMakeLists.txt
