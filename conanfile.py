@@ -41,8 +41,8 @@ class CAFConan(ConanFile):
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
+            del self.options.shared
             if self.settings.arch == "x86":
-                del self.options.shared
                 del self.options.openssl
 
     def source(self):
@@ -51,7 +51,7 @@ class CAFConan(ConanFile):
 
     def requirements(self):
         if self._has_openssl:
-            self.requires("OpenSSL/1.0.2o@conan/stable")
+            self.requires("OpenSSL/1.0.2q@conan/stable")
 
     def configure(self):
         if self.settings.compiler == "gcc":
@@ -64,7 +64,6 @@ class CAFConan(ConanFile):
 
     def _cmake_configure(self):
         cmake = CMake(self)
-        cmake.parallel = True
         cmake.definitions["CMAKE_CXX_STANDARD"] = "11"
         cmake.definitions["CAF_NO_AUTO_LIBCPP"] = True
         cmake.definitions["CAF_NO_OPENSSL"] = not self._has_openssl
