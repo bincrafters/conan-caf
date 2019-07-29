@@ -1,8 +1,8 @@
 ## Package Status
 
-| Bintray | Windows | Linux & macOS | 
+| Bintray | Windows | Linux & macOS |
 |:--------:|:---------:|:-----------------:|
-|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/caf%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/caf%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-caf?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-caf)|[![Build Status](https://travis-ci.org/bincrafters/conan-caf.svg)](https://travis-ci.org/bincrafters/conan-caf)|
+|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/caf%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/caf%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-caf?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-caf)|[![Build Status](https://travis-ci.com/bincrafters/conan-caf.svg)](https://travis-ci.com/bincrafters/conan-caf)|
 
 ## Conan.io Information
 
@@ -39,9 +39,9 @@ The contents of this GIT repository are completely separate from the software be
     ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/package/<random_package_id>/license/<LICENSE_FILES_HERE>
 
 *Note :   The most common filenames for OSS licenses are `LICENSE` AND `COPYING` without file extensions.*
-	
+
 ### License for Bincrafters recipe:
 
     ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/export/LICENSE.md
 
-	
+

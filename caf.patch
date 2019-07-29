@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cb6a7f3..d0924fe 100644
+index 3082682..711ffa4 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -505,25 +505,6 @@ if(NOT CAF_NO_OPENSSL)
+@@ -517,25 +517,6 @@ if(NOT CAF_NO_OPENSSL)
                "Disable OpenSSL. Required >= 1.0.1 due to TLSv1.2 support.")
        set(CAF_NO_OPENSSL yes)
      else()
@@ -29,10 +29,10 @@ index cb6a7f3..d0924fe 100644
        add_optional_caf_lib(openssl)
      endif()
 diff --git a/libcaf_core/CMakeLists.txt b/libcaf_core/CMakeLists.txt
-index 15ef0e0..15ece56 100644
+index 6c0093e..e06589e 100644
 --- a/libcaf_core/CMakeLists.txt
 +++ b/libcaf_core/CMakeLists.txt
-@@ -142,10 +142,12 @@ list(APPEND LIBCAF_CORE_HDRS
+@@ -145,10 +145,12 @@ list(APPEND LIBCAF_CORE_HDRS
  
  add_custom_target(libcaf_core)
  
@@ -46,7 +46,7 @@ index 15ef0e0..15ece56 100644
    target_include_directories(libcaf_core_shared PUBLIC
      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-@@ -167,7 +169,7 @@ endif ()
+@@ -170,7 +172,7 @@ endif ()
  # build static library only if --build-static or --build-static-only was set
  if (CAF_BUILD_STATIC_ONLY OR CAF_BUILD_STATIC)
    add_library(libcaf_core_static STATIC ${LIBCAF_CORE_HDRS} ${LIBCAF_CORE_SRCS})
@@ -76,7 +76,7 @@ index af77a91..8a4fa5d 100644
  #include <stdexcept>
  #include <utility>
 diff --git a/libcaf_io/src/middleman_actor_impl.cpp b/libcaf_io/src/middleman_actor_impl.cpp
-index d0d1b66..ff9499e 100644
+index 0ed95b2..e373f3c 100644
 --- a/libcaf_io/src/middleman_actor_impl.cpp
 +++ b/libcaf_io/src/middleman_actor_impl.cpp
 @@ -18,6 +18,15 @@
@@ -96,36 +96,33 @@ index d0d1b66..ff9499e 100644
  #include <stdexcept>
  #include <utility>
 diff --git a/libcaf_openssl/CMakeLists.txt b/libcaf_openssl/CMakeLists.txt
-index 13cd3d0..e61b8c0 100644
+index 522d41d..068a99e 100644
 --- a/libcaf_openssl/CMakeLists.txt
 +++ b/libcaf_openssl/CMakeLists.txt
-@@ -24,7 +24,7 @@ if (NOT CAF_BUILD_STATIC_ONLY)
+@@ -23,7 +23,7 @@ if (NOT CAF_BUILD_STATIC_ONLY)
    add_library(libcaf_openssl_shared SHARED
                ${LIBCAF_OPENSSL_SRCS} ${LIBCAF_OPENSSL_HDRS})
    target_link_libraries(libcaf_openssl_shared ${CAF_EXTRA_LDFLAGS}
 -                        ${CAF_LIBRARY_CORE} ${CAF_LIBRARY_IO} ${OPENSSL_LIBRARIES})
-+                        ${CAF_LIBRARY_CORE} ${CAF_LIBRARY_IO} ${OPENSSL_LIBRARIES} ${CONAN_LIBS})
++                       ${CAF_LIBRARY_CORE} ${CAF_LIBRARY_IO} ${OPENSSL_LIBRARIES} ${CONAN_LIBS})
  
    if(NOT APPLE AND NOT WIN32)
      target_link_libraries(libcaf_openssl_shared "-pthread")
-@@ -35,9 +35,9 @@ if (NOT CAF_BUILD_STATIC_ONLY)
+@@ -34,7 +34,7 @@ if (NOT CAF_BUILD_STATIC_ONLY)
                          SOVERSION ${CAF_VERSION}
                          VERSION ${CAF_VERSION}
                          OUTPUT_NAME caf_openssl)
 -  if (CYGWIN)
 +  if (CYGWIN OR WIN32)
      install(TARGETS libcaf_openssl_shared RUNTIME DESTINATION bin)
--  elseif (NOT WIN32)
-+  else()
+   elseif (NOT WIN32)
      install(TARGETS libcaf_openssl_shared LIBRARY DESTINATION lib)
-   endif()
-   add_dependencies(libcaf_openssl_shared libcaf_openssl)
-@@ -48,12 +48,10 @@ if (CAF_BUILD_STATIC_ONLY OR CAF_BUILD_STATIC)
+@@ -47,12 +47,10 @@ if (CAF_BUILD_STATIC_ONLY OR CAF_BUILD_STATIC)
    add_library(libcaf_openssl_static STATIC
                ${LIBCAF_OPENSSL_HDRS} ${LIBCAF_OPENSSL_SRCS})
    target_link_libraries(libcaf_openssl_static ${CAF_EXTRA_LDFLAGS}
 -                        ${CAF_LIBRARY_CORE_STATIC} ${CAF_LIBRARY_IO_STATIC} ${OPENSSL_LIBRARIES})
-+                        ${CAF_LIBRARY_CORE_STATIC} ${CAF_LIBRARY_IO_STATIC} ${OPENSSL_LIBRARIES} ${CONAN_LIBS})
++                	${CAF_LIBRARY_CORE_STATIC} ${CAF_LIBRARY_IO_STATIC} ${OPENSSL_LIBRARIES} ${CONAN_LIBS})
    set_target_properties(libcaf_openssl_static PROPERTIES
                          OUTPUT_NAME caf_openssl_static)
 -  if(NOT WIN32)
@@ -136,7 +133,7 @@ index 13cd3d0..e61b8c0 100644
  endif ()
  
 diff --git a/libcaf_openssl/src/middleman_actor.cpp b/libcaf_openssl/src/middleman_actor.cpp
-index 1a1a326..d6f1c18 100644
+index 7a99308..2a7b760 100644
 --- a/libcaf_openssl/src/middleman_actor.cpp
 +++ b/libcaf_openssl/src/middleman_actor.cpp
 @@ -18,6 +18,15 @@
