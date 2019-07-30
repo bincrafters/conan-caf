@@ -60,8 +60,8 @@ class CAFConan(ConanFile):
                 raise ConanInvalidConfiguration("g++ >= 4.8 is required, yours is %s" % self.settings.compiler.version)
         if self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) < "3.4":
             raise ConanInvalidConfiguration("clang >= 3.4 is required, yours is %s" % self.settings.compiler.version)
-        if self.settings.compiler == "Visual Studio" and Version(self.settings.compiler.version.value) < "14":
-            raise ConanInvalidConfiguration("Visual Studio >= 14 is required, yours is %s" % self.settings.compiler.version)
+        if self.settings.compiler == "Visual Studio" and Version(self.settings.compiler.version.value) < "15":
+            raise ConanInvalidConfiguration("Visual Studio >= 15 is required, yours is %s" % self.settings.compiler.version)
 
     def _cmake_configure(self):
         cmake = CMake(self)
