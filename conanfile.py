@@ -63,10 +63,8 @@ class CAFConan(ConanFile):
         elif self.settings.compiler == "Visual Studio" and Version(self.settings.compiler.version.value) < "15":
             raise ConanInvalidConfiguration("Visual Studio >= 15 is required, yours is %s" % self.settings.compiler.version)
         elif self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) == "7.0" and \
-             self.settings.build_type == "Debug" and self.settings.arch == "x86_64" and self.options.shared and \
-             self.settings.compiler.libcxx == "libstdc++":
+             self.settings.build_type == "Debug" and self.settings.arch == "x86_64" and self.options.shared:
             raise ConanInvalidConfiguration("CAF can not be built using this configuration")
-
 
     def _cmake_configure(self):
         cmake = CMake(self)
@@ -95,10 +93,9 @@ class CAFConan(ConanFile):
 
     def package_info(self):
         suffix = "_static" if self._is_static else ""
-        self.cpp_info.libs = ["caf_io%s" % suffix]
+        self.cpp_info.libs = ["caf_core%s" % suffix, "caf_io%s" % suffix]
         if self._has_openssl:
             self.cpp_info.libs.append("caf_openssl%s" % suffix)
-        self.cpp_info.libs.append("caf_core%s" % suffix)
         if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio":
             self.cpp_info.libs.append('ws2_32')
             self.cpp_info.libs.append('iphlpapi')
