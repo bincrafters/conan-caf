@@ -93,7 +93,7 @@ class CAFConan(ConanFile):
 
     def package_info(self):
         suffix = "_static" if self._is_static else ""
-        self.cpp_info.libs = ["caf_core%s" % suffix, "caf_io%s" % suffix]
+        self.cpp_info.libs = ["caf_io%s" % suffix, "caf_core%s" % suffix]
         if self._has_openssl:
             self.cpp_info.libs.append("caf_openssl%s" % suffix)
         if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio":
