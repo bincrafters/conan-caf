@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3082682..711ffa4 100644
+index 3f57233f..8fd862c6 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -517,25 +517,6 @@ if(NOT CAF_NO_OPENSSL)
+@@ -530,25 +530,6 @@ if(NOT CAF_NO_OPENSSL)
                "Disable OpenSSL. Required >= 1.0.1 due to TLSv1.2 support.")
        set(CAF_NO_OPENSSL yes)
      else()
@@ -29,10 +29,10 @@ index 3082682..711ffa4 100644
        add_optional_caf_lib(openssl)
      endif()
 diff --git a/libcaf_core/CMakeLists.txt b/libcaf_core/CMakeLists.txt
-index 6c0093e..e06589e 100644
+index e08593d5..d1d61dc9 100644
 --- a/libcaf_core/CMakeLists.txt
 +++ b/libcaf_core/CMakeLists.txt
-@@ -145,10 +145,12 @@ list(APPEND LIBCAF_CORE_HDRS
+@@ -151,10 +151,12 @@ list(APPEND LIBCAF_CORE_HDRS
  
  add_custom_target(libcaf_core)
  
@@ -46,7 +46,7 @@ index 6c0093e..e06589e 100644
    target_include_directories(libcaf_core_shared PUBLIC
      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-@@ -170,7 +172,7 @@ endif ()
+@@ -176,7 +178,7 @@ endif ()
  # build static library only if --build-static or --build-static-only was set
  if (CAF_BUILD_STATIC_ONLY OR CAF_BUILD_STATIC)
    add_library(libcaf_core_static STATIC ${LIBCAF_CORE_HDRS} ${LIBCAF_CORE_SRCS})
@@ -56,7 +56,7 @@ index 6c0093e..e06589e 100644
      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 diff --git a/libcaf_io/src/middleman_actor.cpp b/libcaf_io/src/middleman_actor.cpp
-index af77a91..8a4fa5d 100644
+index af77a913..8a4fa5de 100644
 --- a/libcaf_io/src/middleman_actor.cpp
 +++ b/libcaf_io/src/middleman_actor.cpp
 @@ -18,6 +18,15 @@
@@ -76,7 +76,7 @@ index af77a91..8a4fa5d 100644
  #include <stdexcept>
  #include <utility>
 diff --git a/libcaf_io/src/middleman_actor_impl.cpp b/libcaf_io/src/middleman_actor_impl.cpp
-index 0ed95b2..e373f3c 100644
+index 0ed95b2f..e373f3c6 100644
 --- a/libcaf_io/src/middleman_actor_impl.cpp
 +++ b/libcaf_io/src/middleman_actor_impl.cpp
 @@ -18,6 +18,15 @@
@@ -96,7 +96,7 @@ index 0ed95b2..e373f3c 100644
  #include <stdexcept>
  #include <utility>
 diff --git a/libcaf_openssl/CMakeLists.txt b/libcaf_openssl/CMakeLists.txt
-index 522d41d..068a99e 100644
+index 522d41dd..068a99e2 100644
 --- a/libcaf_openssl/CMakeLists.txt
 +++ b/libcaf_openssl/CMakeLists.txt
 @@ -23,7 +23,7 @@ if (NOT CAF_BUILD_STATIC_ONLY)
@@ -133,7 +133,7 @@ index 522d41d..068a99e 100644
  endif ()
  
 diff --git a/libcaf_openssl/src/middleman_actor.cpp b/libcaf_openssl/src/middleman_actor.cpp
-index 7a99308..2a7b760 100644
+index 7a99308f..2a7b7608 100644
 --- a/libcaf_openssl/src/middleman_actor.cpp
 +++ b/libcaf_openssl/src/middleman_actor.cpp
 @@ -18,6 +18,15 @@
