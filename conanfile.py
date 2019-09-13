@@ -58,8 +58,10 @@ class CAFConan(ConanFile):
         if self.settings.compiler == "gcc":
             if Version(self.settings.compiler.version.value) < "4.8":
                 raise ConanInvalidConfiguration("g++ >= 4.8 is required, yours is %s" % self.settings.compiler.version)
-        elif self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) < "3.4":
-            raise ConanInvalidConfiguration("clang >= 3.4 is required, yours is %s" % self.settings.compiler.version)
+        elif self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) < "4.0":
+            raise ConanInvalidConfiguration("clang >= 4.0 is required, yours is %s" % self.settings.compiler.version)
+        elif self.settings.compiler == "apple-clang" and Version(self.settings.compiler.version.value) < "9.0":
+            raise ConanInvalidConfiguration("clang >= 9.0 is required, yours is %s" % self.settings.compiler.version)
         elif self.settings.compiler == "Visual Studio" and Version(self.settings.compiler.version.value) < "15":
             raise ConanInvalidConfiguration("Visual Studio >= 15 is required, yours is %s" % self.settings.compiler.version)
         elif self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) == "7.0" and \
