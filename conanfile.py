@@ -1,10 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import os
 from conans import ConanFile, CMake, tools
 from conans.errors import ConanInvalidConfiguration
-from conans.model.version import Version
+from conans.tools import Version
 
 
 class CAFConan(ConanFile):
@@ -52,7 +49,7 @@ class CAFConan(ConanFile):
 
     def requirements(self):
         if self._has_openssl:
-            self.requires("OpenSSL/1.0.2s@conan/stable")
+            self.requires("openssl/1.0.2t")
 
     def configure(self):
         if self.settings.compiler == "gcc":
