@@ -4,7 +4,7 @@
 |:--------:|:---------:|:-----------------:|
 |[![Download](https://api.bintray.com/packages/bincrafters/public-conan/caf%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/caf%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-caf?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-caf)|[![Build Status](https://travis-ci.com/bincrafters/conan-caf.svg)](https://travis-ci.com/bincrafters/conan-caf)|
 
-## Conan.io Information
+## Conan Information
 
 Bincrafters packages can be found in the following public Conan repository:
 
@@ -43,5 +43,3 @@ The contents of this GIT repository are completely separate from the software be
 ### License for Bincrafters recipe:
 
     ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/export/LICENSE.md
-
-
