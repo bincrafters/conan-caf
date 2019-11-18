@@ -11,7 +11,6 @@ class CAFConan(ConanFile):
     url = "https://github.com/bincrafters/conan-caf"
     homepage = "https://github.com/actor-framework/actor-framework"
     topics = ("conan", "caf", "acto-framework", "actor-model", "pattern-matching", "actors")
-    author = "Bincrafters <bincrafters@gmail.com>"
     license = ("BSD-3-Clause, BSL-1.0")
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "caf.patch"]
