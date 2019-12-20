@@ -6,11 +6,11 @@ from conans.tools import Version
 
 class CAFConan(ConanFile):
     name = "caf"
-    version = "0.17.0"
+    version = "0.17.1"
     description = "An open source implementation of the Actor Model in C++"
     url = "https://github.com/bincrafters/conan-caf"
     homepage = "https://github.com/actor-framework/actor-framework"
-    topics = ("conan", "caf", "acto-framework", "actor-model", "pattern-matching", "actors")
+    topics = ("conan", "caf", "actor-framework", "actor-model", "pattern-matching", "actors")
     author = "Bincrafters <bincrafters@gmail.com>"
     license = ("BSD-3-Clause, BSL-1.0")
     exports = ["LICENSE.md"]
@@ -43,7 +43,7 @@ class CAFConan(ConanFile):
                 del self.options.openssl
 
     def source(self):
-        sha256 = "c7a0ced74ebce95885b21b60b24d79d4674b11c94dda121784234100f361b77f"
+        sha256 = "7f6b6db9398e35e5dd9fe1997558deb44069d471ec79862d640deca240fd020a"
         tools.get("{}/archive/{}.tar.gz".format(self.homepage, self.version), sha256=sha256)
         os.rename("actor-framework-" + self.version, self._source_subfolder)
 
@@ -55,8 +55,10 @@ class CAFConan(ConanFile):
         if self.settings.compiler == "gcc":
             if Version(self.settings.compiler.version.value) < "4.8":
                 raise ConanInvalidConfiguration("g++ >= 4.8 is required, yours is %s" % self.settings.compiler.version)
-        elif self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) < "3.4":
-            raise ConanInvalidConfiguration("clang >= 3.4 is required, yours is %s" % self.settings.compiler.version)
+        elif self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) < "4.0":
+            raise ConanInvalidConfiguration("clang >= 4.0 is required, yours is %s" % self.settings.compiler.version)
+        elif self.settings.compiler == "apple-clang" and Version(self.settings.compiler.version.value) < "9.0":
+            raise ConanInvalidConfiguration("clang >= 9.0 is required, yours is %s" % self.settings.compiler.version)
         elif self.settings.compiler == "Visual Studio" and Version(self.settings.compiler.version.value) < "15":
             raise ConanInvalidConfiguration("Visual Studio >= 15 is required, yours is %s" % self.settings.compiler.version)
         elif self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) == "7.0" and \
@@ -93,8 +95,7 @@ class CAFConan(ConanFile):
         self.cpp_info.libs = ["caf_io%s" % suffix, "caf_core%s" % suffix]
         if self._has_openssl:
             self.cpp_info.libs.append("caf_openssl%s" % suffix)
-        if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio":
-            self.cpp_info.libs.append('ws2_32')
-            self.cpp_info.libs.append('iphlpapi')
+        if self.settings.os == "Windows":
+            self.cpp_info.libs.extend(["ws2_32", "iphlpapi", "psapi"])
         elif self.settings.os == "Linux":
             self.cpp_info.libs.extend(['pthread', 'm'])
