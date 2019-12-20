@@ -11,7 +11,6 @@ class CAFConan(ConanFile):
     url = "https://github.com/bincrafters/conan-caf"
     homepage = "https://github.com/actor-framework/actor-framework"
     topics = ("conan", "caf", "actor-framework", "actor-model", "pattern-matching", "actors")
-    author = "Bincrafters <bincrafters@gmail.com>"
     license = ("BSD-3-Clause, BSL-1.0")
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "caf.patch"]
@@ -77,7 +76,7 @@ class CAFConan(ConanFile):
         cmake.definitions["CAF_BUILD_STATIC"] = self._is_static
         cmake.definitions["CAF_BUILD_STATIC_ONLY"] = self._is_static
         cmake.definitions["CAF_LOG_LEVEL"] = self.default_options['log_level'].index(self.options.log_level.value)
-        cmake.configure(build_dir=self._build_subfolder)
+        cmake.configure(build_folder=self._build_subfolder)
         return cmake
 
     def build(self):

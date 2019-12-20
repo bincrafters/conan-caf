@@ -6,8 +6,7 @@ from bincrafters import build_template_default
 
 
 def get_shared_option_name():
-    return False if platform.system() == 'Windows' or \
-                    os.getenv("CONAN_ARCHS") == "x86" else "caf:shared"
+    return False if platform.system() == 'Windows' else "caf:shared"
 
 if __name__ == "__main__":
     builder = build_template_default.get_builder(pure_c=False,
