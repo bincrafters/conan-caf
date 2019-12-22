@@ -6,7 +6,7 @@ from conans.tools import Version
 
 class CAFConan(ConanFile):
     name = "caf"
-    version = "0.17.1"
+    version = "0.17.3"
     description = "An open source implementation of the Actor Model in C++"
     url = "https://github.com/bincrafters/conan-caf"
     homepage = "https://github.com/actor-framework/actor-framework"
@@ -42,7 +42,7 @@ class CAFConan(ConanFile):
                 del self.options.openssl
 
     def source(self):
-        sha256 = "7f6b6db9398e35e5dd9fe1997558deb44069d471ec79862d640deca240fd020a"
+        sha256 = "af235dbb5001a86d716c19f1b597be81bbcf172b87d42e2a38dc3ac97ea3863d"
         tools.get("{}/archive/{}.tar.gz".format(self.homepage, self.version), sha256=sha256)
         os.rename("actor-framework-" + self.version, self._source_subfolder)
 
@@ -58,11 +58,11 @@ class CAFConan(ConanFile):
             raise ConanInvalidConfiguration("clang >= 4.0 is required, yours is %s" % self.settings.compiler.version)
         elif self.settings.compiler == "apple-clang" and Version(self.settings.compiler.version.value) < "9.0":
             raise ConanInvalidConfiguration("clang >= 9.0 is required, yours is %s" % self.settings.compiler.version)
+        elif self.settings.compiler == "apple-clang" and Version(self.settings.compiler.version.value) > "10.0" and \
+                self.settings.arch == 'x86':
+            raise ConanInvalidConfiguration("clang >= 11.0 does not support x86")
         elif self.settings.compiler == "Visual Studio" and Version(self.settings.compiler.version.value) < "15":
             raise ConanInvalidConfiguration("Visual Studio >= 15 is required, yours is %s" % self.settings.compiler.version)
-        elif self.settings.compiler == "clang" and Version(self.settings.compiler.version.value) == "7.0" and \
-             self.settings.build_type == "Debug" and self.settings.arch == "x86_64" and self.options.shared:
-            raise ConanInvalidConfiguration("CAF can not be built using this configuration")
 
     def _cmake_configure(self):
         cmake = CMake(self)
@@ -76,11 +76,21 @@ class CAFConan(ConanFile):
         cmake.definitions["CAF_BUILD_STATIC"] = self._is_static
         cmake.definitions["CAF_BUILD_STATIC_ONLY"] = self._is_static
         cmake.definitions["CAF_LOG_LEVEL"] = self.default_options['log_level'].index(self.options.log_level.value)
+        if self.settings.os == 'Windows':
+            cmake.definitions["OPENSSL_USE_STATIC_LIBS"] = True
+            cmake.definitions["OPENSSL_MSVC_STATIC_RT"] = True
+        elif self.settings.compiler == 'clang':
+            cmake.definitions["PTHREAD_LIBRARIES"] = "-pthread -ldl"
+        else:
+            cmake.definitions["PTHREAD_LIBRARIES"] = "-pthread"
+            if self.settings.compiler == "gcc" and Version(self.settings.compiler.version.value) < "5.0":
+                cmake.definitions["CMAKE_SHARED_LINKER_FLAGS"] = "-pthread"
         cmake.configure(build_folder=self._build_subfolder)
         return cmake
 
     def build(self):
-        tools.patch(base_path=self._source_subfolder, patch_file="caf.patch")
+        if self.settings.os == "Windows":  # Needed for MSVC and Mingw
+            tools.patch(base_path=self._source_subfolder, patch_file="caf.patch")
         cmake = self._cmake_configure()
         cmake.build()
 
@@ -97,4 +107,4 @@ class CAFConan(ConanFile):
         if self.settings.os == "Windows":
             self.cpp_info.libs.extend(["ws2_32", "iphlpapi", "psapi"])
         elif self.settings.os == "Linux":
-            self.cpp_info.libs.extend(['pthread', 'm'])
+            self.cpp_info.libs.extend(['-pthread', 'm'])

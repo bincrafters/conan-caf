@@ -1,169 +1,73 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3f57233f..8fd862c6 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -530,25 +530,6 @@ if(NOT CAF_NO_OPENSSL)
-               "Disable OpenSSL. Required >= 1.0.1 due to TLSv1.2 support.")
-       set(CAF_NO_OPENSSL yes)
-     else()
--      if(NOT CMAKE_CROSSCOMPILING)
--        # Check if openssl headers and library versions match
--        set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
--        set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
--        check_c_source_runs("
--          #include <openssl/opensslv.h>
--          #include <openssl/crypto.h>
--          int main() {
--            if (SSLeay() == OPENSSL_VERSION_NUMBER) {
--              return 0;
--            }
--            return -1;
--          }
--        " OPENSSL_CORRECT_VERSION_NUMBER)
--        if (NOT OPENSSL_CORRECT_VERSION_NUMBER)
--          message(FATAL_ERROR
--            "OpenSSL library version does not match headers")
--        endif()
--      endif()
-       include_directories(BEFORE ${OPENSSL_INCLUDE_DIR})
-       add_optional_caf_lib(openssl)
-     endif()
-diff --git a/libcaf_core/CMakeLists.txt b/libcaf_core/CMakeLists.txt
-index e08593d5..d1d61dc9 100644
---- a/libcaf_core/CMakeLists.txt
-+++ b/libcaf_core/CMakeLists.txt
-@@ -151,10 +151,12 @@ list(APPEND LIBCAF_CORE_HDRS
- 
- add_custom_target(libcaf_core)
- 
-+find_package(Threads)
-+
- # build shared library if not compiling static only
- if (NOT CAF_BUILD_STATIC_ONLY)
-   add_library(libcaf_core_shared SHARED ${LIBCAF_CORE_SRCS} ${LIBCAF_CORE_HDRS})
--  target_link_libraries(libcaf_core_shared ${CAF_EXTRA_LDFLAGS})
-+  target_link_libraries(libcaf_core_shared ${CAF_EXTRA_LDFLAGS} ${CMAKE_THREAD_LIBS_INIT})
-   target_include_directories(libcaf_core_shared PUBLIC
-     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-@@ -176,7 +178,7 @@ endif ()
- # build static library only if --build-static or --build-static-only was set
- if (CAF_BUILD_STATIC_ONLY OR CAF_BUILD_STATIC)
-   add_library(libcaf_core_static STATIC ${LIBCAF_CORE_HDRS} ${LIBCAF_CORE_SRCS})
--  target_link_libraries(libcaf_core_static ${CAF_EXTRA_LDFLAGS})
-+  target_link_libraries(libcaf_core_static ${CAF_EXTRA_LDFLAGS} ${CMAKE_THREAD_LIBS_INIT} ${CONAN_LIBS})
-   target_include_directories(libcaf_core_static PUBLIC
-     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-diff --git a/libcaf_io/src/middleman_actor.cpp b/libcaf_io/src/middleman_actor.cpp
-index af77a913..8a4fa5de 100644
---- a/libcaf_io/src/middleman_actor.cpp
-+++ b/libcaf_io/src/middleman_actor.cpp
-@@ -18,6 +18,15 @@
+Index: libcaf_openssl/src/openssl/middleman_actor.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- libcaf_openssl/src/openssl/middleman_actor.cpp	(revision b05a4b7b2a6f59b0508db84ea68e5ada2224f904)
++++ libcaf_openssl/src/openssl/middleman_actor.cpp	(date 1577048928584)
+@@ -18,6 +18,14 @@
  
  #include "caf/io/middleman_actor.hpp"
  
 +#ifdef CAF_WINDOWS
 +#  include <winsock2.h>
-+#  include <ws2tcpip.h>
-+#  include <windows.h>
++#  include <ws2tcpip.h> // socket_size_type, etc. (MSVC20xx)
 +#else
 +#  include <sys/socket.h>
 +#  include <sys/types.h>
-+#endif // CAF_WINDOWS
-+
- #include <tuple>
- #include <stdexcept>
- #include <utility>
-diff --git a/libcaf_io/src/middleman_actor_impl.cpp b/libcaf_io/src/middleman_actor_impl.cpp
-index 0ed95b2f..e373f3c6 100644
---- a/libcaf_io/src/middleman_actor_impl.cpp
-+++ b/libcaf_io/src/middleman_actor_impl.cpp
-@@ -18,6 +18,15 @@
- 
- #include "caf/io/middleman_actor_impl.hpp"
- 
-+#ifdef CAF_WINDOWS
-+#  include <winsock2.h>
-+#  include <ws2tcpip.h>
-+#  include <windows.h>
-+#else
-+#  include <sys/socket.h>
-+#  include <sys/types.h>
-+#endif // CAF_WINDOWS
-+
- #include <tuple>
- #include <stdexcept>
- #include <utility>
-diff --git a/libcaf_openssl/CMakeLists.txt b/libcaf_openssl/CMakeLists.txt
-index 522d41dd..068a99e2 100644
---- a/libcaf_openssl/CMakeLists.txt
-+++ b/libcaf_openssl/CMakeLists.txt
-@@ -23,7 +23,7 @@ if (NOT CAF_BUILD_STATIC_ONLY)
-   add_library(libcaf_openssl_shared SHARED
-               ${LIBCAF_OPENSSL_SRCS} ${LIBCAF_OPENSSL_HDRS})
-   target_link_libraries(libcaf_openssl_shared ${CAF_EXTRA_LDFLAGS}
--                        ${CAF_LIBRARY_CORE} ${CAF_LIBRARY_IO} ${OPENSSL_LIBRARIES})
-+                       ${CAF_LIBRARY_CORE} ${CAF_LIBRARY_IO} ${OPENSSL_LIBRARIES} ${CONAN_LIBS})
- 
-   if(NOT APPLE AND NOT WIN32)
-     target_link_libraries(libcaf_openssl_shared "-pthread")
-@@ -34,7 +34,7 @@ if (NOT CAF_BUILD_STATIC_ONLY)
-                         SOVERSION ${CAF_VERSION}
-                         VERSION ${CAF_VERSION}
-                         OUTPUT_NAME caf_openssl)
--  if (CYGWIN)
-+  if (CYGWIN OR WIN32)
-     install(TARGETS libcaf_openssl_shared RUNTIME DESTINATION bin)
-   elseif (NOT WIN32)
-     install(TARGETS libcaf_openssl_shared LIBRARY DESTINATION lib)
-@@ -47,12 +47,10 @@ if (CAF_BUILD_STATIC_ONLY OR CAF_BUILD_STATIC)
-   add_library(libcaf_openssl_static STATIC
-               ${LIBCAF_OPENSSL_HDRS} ${LIBCAF_OPENSSL_SRCS})
-   target_link_libraries(libcaf_openssl_static ${CAF_EXTRA_LDFLAGS}
--                        ${CAF_LIBRARY_CORE_STATIC} ${CAF_LIBRARY_IO_STATIC} ${OPENSSL_LIBRARIES})
-+                	${CAF_LIBRARY_CORE_STATIC} ${CAF_LIBRARY_IO_STATIC} ${OPENSSL_LIBRARIES} ${CONAN_LIBS})
-   set_target_properties(libcaf_openssl_static PROPERTIES
-                         OUTPUT_NAME caf_openssl_static)
--  if(NOT WIN32)
--    install(TARGETS libcaf_openssl_static ARCHIVE DESTINATION lib)
--  endif()
-+  install(TARGETS libcaf_openssl_static ARCHIVE DESTINATION lib)
-   add_dependencies(libcaf_openssl_static libcaf_openssl)
- endif ()
- 
-diff --git a/libcaf_openssl/src/middleman_actor.cpp b/libcaf_openssl/src/middleman_actor.cpp
-index 7a99308f..2a7b7608 100644
---- a/libcaf_openssl/src/middleman_actor.cpp
-+++ b/libcaf_openssl/src/middleman_actor.cpp
-@@ -18,6 +18,15 @@
- 
- #include "caf/io/middleman_actor.hpp"
- 
-+#ifdef CAF_WINDOWS
-+# include <winsock2.h>
-+# include <ws2tcpip.h> // socket_size_type, etc. (MSVC20xx)
-+# include <windows.h>
-+#else
-+# include <sys/types.h>
-+# include <sys/socket.h>
 +#endif
 +
- #include <tuple>
  #include <stdexcept>
+ #include <tuple>
  #include <utility>
-@@ -42,14 +51,6 @@
+@@ -42,14 +50,6 @@
  
  #include "caf/openssl/session.hpp"
  
 -#ifdef CAF_WINDOWS
--# include <winsock2.h>
--# include <ws2tcpip.h> // socket_size_type, etc. (MSVC20xx)
+-#  include <winsock2.h>
+-#  include <ws2tcpip.h> // socket_size_type, etc. (MSVC20xx)
 -#else
--# include <sys/types.h>
--# include <sys/socket.h>
+-#  include <sys/socket.h>
+-#  include <sys/types.h>
 -#endif
 -
  namespace caf {
  namespace openssl {
+ 
+Index: libcaf_openssl/CMakeLists.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- libcaf_openssl/CMakeLists.txt	(revision b05a4b7b2a6f59b0508db84ea68e5ada2224f904)
++++ libcaf_openssl/CMakeLists.txt	(date 1577048348649)
+@@ -34,7 +34,7 @@
+                         SOVERSION ${CAF_VERSION}
+                         VERSION ${CAF_LIB_VERSION}
+                         OUTPUT_NAME caf_openssl)
+-  if (CYGWIN)
++  if (CYGWIN OR WIN32)
+     install(TARGETS libcaf_openssl_shared RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+   elseif (NOT WIN32)
+     install(TARGETS libcaf_openssl_shared LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+@@ -50,9 +50,7 @@
+                         ${CAF_LIBRARY_CORE_STATIC} ${CAF_LIBRARY_IO_STATIC} ${OPENSSL_LIBRARIES})
+   set_target_properties(libcaf_openssl_static PROPERTIES
+                         OUTPUT_NAME caf_openssl_static)
+-  if(NOT WIN32)
+-    install(TARGETS libcaf_openssl_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+-  endif()
++  install(TARGETS libcaf_openssl_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+   add_dependencies(libcaf_openssl_static libcaf_openssl)
+ endif ()
+ 
+@@ -60,7 +58,5 @@
+ include_directories(. ${INCLUDE_DIRS})
+ 
+ # install includes
+-if(NOT WIN32)
+-  install(DIRECTORY caf/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/caf FILES_MATCHING PATTERN "*.hpp")
+-endif()
++install(DIRECTORY caf/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/caf FILES_MATCHING PATTERN "*.hpp")
  
