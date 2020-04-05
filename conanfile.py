@@ -12,7 +12,6 @@ class CAFConan(ConanFile):
     homepage = "https://github.com/actor-framework/actor-framework"
     topics = ("conan", "caf", "actor-framework", "actor-model", "pattern-matching", "actors")
     license = ("BSD-3-Clause, BSL-1.0")
-    exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "caf.patch"]
     generators = ["cmake"]
     settings = "os", "compiler", "build_type", "arch"
