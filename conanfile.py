@@ -6,7 +6,7 @@ from conans.tools import Version
 
 class CAFConan(ConanFile):
     name = "caf"
-    version = "0.17.3"
+    version = "0.17.6"
     description = "An open source implementation of the Actor Model in C++"
     url = "https://github.com/bincrafters/conan-caf"
     homepage = "https://github.com/actor-framework/actor-framework"
@@ -41,7 +41,7 @@ class CAFConan(ConanFile):
                 del self.options.openssl
 
     def source(self):
-        sha256 = "af235dbb5001a86d716c19f1b597be81bbcf172b87d42e2a38dc3ac97ea3863d"
+        sha256 = "e2bf5bd243f08bb7d8adde197cfe3e6d71314ed3378fe0692f8932f4c3b3928c"
         tools.get("{}/archive/{}.tar.gz".format(self.homepage, self.version), sha256=sha256)
         os.rename("actor-framework-" + self.version, self._source_subfolder)
 
