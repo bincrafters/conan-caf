@@ -24,6 +24,7 @@ class CAFConan(ConanFile):
     default_options = {"shared": False, "fPIC": True, "log_level": "NONE", "openssl": True}
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
+    _cmake = None
 
     @property
     def _is_static(self):
@@ -64,28 +65,29 @@ class CAFConan(ConanFile):
             raise ConanInvalidConfiguration("Visual Studio >= 15 is required, yours is %s" % self.settings.compiler.version)
 
     def _cmake_configure(self):
-        cmake = CMake(self)
-        cmake.definitions["CMAKE_CXX_STANDARD"] = "11"
-        cmake.definitions["CAF_NO_AUTO_LIBCPP"] = True
-        cmake.definitions["CAF_NO_OPENSSL"] = not self._has_openssl
-        for define in ["CAF_NO_EXAMPLES", "CAF_NO_TOOLS", "CAF_NO_UNIT_TESTS", "CAF_NO_PYTHON"]:
-            cmake.definitions[define] = "ON"
-        if tools.os_info.is_macos and self.settings.arch == "x86":
-            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = "i386"
-        cmake.definitions["CAF_BUILD_STATIC"] = self._is_static
-        cmake.definitions["CAF_BUILD_STATIC_ONLY"] = self._is_static
-        cmake.definitions["CAF_LOG_LEVEL"] = self.default_options['log_level'].index(self.options.log_level.value)
-        if self.settings.os == 'Windows':
-            cmake.definitions["OPENSSL_USE_STATIC_LIBS"] = True
-            cmake.definitions["OPENSSL_MSVC_STATIC_RT"] = True
-        elif self.settings.compiler == 'clang':
-            cmake.definitions["PTHREAD_LIBRARIES"] = "-pthread -ldl"
-        else:
-            cmake.definitions["PTHREAD_LIBRARIES"] = "-pthread"
-            if self.settings.compiler == "gcc" and Version(self.settings.compiler.version.value) < "5.0":
-                cmake.definitions["CMAKE_SHARED_LINKER_FLAGS"] = "-pthread"
-        cmake.configure(build_folder=self._build_subfolder)
-        return cmake
+        if not self._cmake:
+            self._cmake = CMake(self)
+            self._cmake.definitions["CMAKE_CXX_STANDARD"] = "11"
+            self._cmake.definitions["CAF_NO_AUTO_LIBCPP"] = True
+            self._cmake.definitions["CAF_NO_OPENSSL"] = not self._has_openssl
+            for define in ["CAF_NO_EXAMPLES", "CAF_NO_TOOLS", "CAF_NO_UNIT_TESTS", "CAF_NO_PYTHON"]:
+                self._cmake.definitions[define] = "ON"
+            if tools.os_info.is_macos and self.settings.arch == "x86":
+                self._cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = "i386"
+            self._cmake.definitions["CAF_BUILD_STATIC"] = self._is_static
+            self._cmake.definitions["CAF_BUILD_STATIC_ONLY"] = self._is_static
+            self._cmake.definitions["CAF_LOG_LEVEL"] = self.default_options['log_level'].index(self.options.log_level.value)
+            if self.settings.os == 'Windows':
+                self._cmake.definitions["OPENSSL_USE_STATIC_LIBS"] = True
+                self._cmake.definitions["OPENSSL_MSVC_STATIC_RT"] = True
+            elif self.settings.compiler == 'clang':
+                self._cmake.definitions["PTHREAD_LIBRARIES"] = "-pthread -ldl"
+            else:
+                self._cmake.definitions["PTHREAD_LIBRARIES"] = "-pthread"
+                if self.settings.compiler == "gcc" and Version(self.settings.compiler.version.value) < "5.0":
+                    self._cmake.definitions["CMAKE_SHARED_LINKER_FLAGS"] = "-pthread"
+            self._cmake.configure(build_folder=self._build_subfolder)
+        return self._cmake
 
     def build(self):
         if self.settings.os == "Windows":  # Needed for MSVC and Mingw
