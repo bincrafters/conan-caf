@@ -106,6 +106,6 @@ class CAFConan(ConanFile):
         if self._has_openssl:
             self.cpp_info.libs.append("caf_openssl%s" % suffix)
         if self.settings.os == "Windows":
-            self.cpp_info.libs.extend(["ws2_32", "iphlpapi", "psapi"])
+            self.cpp_info.system_libs.extend(["ws2_32", "iphlpapi", "psapi"])
         elif self.settings.os == "Linux":
-            self.cpp_info.libs.extend(['-pthread', 'm'])
+            self.cpp_info.system_libs.extend(['-pthread', 'm'])
