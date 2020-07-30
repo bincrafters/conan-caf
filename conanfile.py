@@ -76,7 +76,8 @@ class CAFConan(ConanFile):
                 self._cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = "i386"
             self._cmake.definitions["CAF_BUILD_STATIC"] = self._is_static
             self._cmake.definitions["CAF_BUILD_STATIC_ONLY"] = self._is_static
-            self._cmake.definitions["CAF_LOG_LEVEL"] = self.default_options['log_level'].index(self.options.log_level.value)
+            if self.options.log_level != "NONE":
+                self._cmake.definitions["CAF_LOG_LEVEL"] = self.options.log_level
             if self.settings.os == 'Windows':
                 self._cmake.definitions["OPENSSL_USE_STATIC_LIBS"] = True
                 self._cmake.definitions["OPENSSL_MSVC_STATIC_RT"] = True
