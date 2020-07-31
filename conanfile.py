@@ -21,7 +21,7 @@ class CAFConan(ConanFile):
         "log_level": ["ERROR", "WARNING", "INFO", "DEBUG", "TRACE", "QUIET"],
         "openssl": [True, False]
     }
-    default_options = {"shared": False, "fPIC": True, "log_level": "NONE", "openssl": True}
+    default_options = {"shared": False, "fPIC": True, "log_level": "QUIET", "openssl": True}
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
     _cmake = None
