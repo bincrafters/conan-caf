@@ -18,7 +18,7 @@ class CAFConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-        "log_level": ["ERROR", "WARNING", "INFO", "DEBUG", "TRACE", "NONE"],
+        "log_level": ["ERROR", "WARNING", "INFO", "DEBUG", "TRACE", "QUIET"],
         "openssl": [True, False]
     }
     default_options = {"shared": False, "fPIC": True, "log_level": "NONE", "openssl": True}
@@ -76,8 +76,7 @@ class CAFConan(ConanFile):
                 self._cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = "i386"
             self._cmake.definitions["CAF_BUILD_STATIC"] = self._is_static
             self._cmake.definitions["CAF_BUILD_STATIC_ONLY"] = self._is_static
-            if self.options.log_level != "NONE":
-                self._cmake.definitions["CAF_LOG_LEVEL"] = self.options.log_level
+            self._cmake.definitions["CAF_LOG_LEVEL"] = self.options.log_level
             if self.settings.os == 'Windows':
                 self._cmake.definitions["OPENSSL_USE_STATIC_LIBS"] = True
                 self._cmake.definitions["OPENSSL_MSVC_STATIC_RT"] = True
