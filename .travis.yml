@@ -45,4 +45,4 @@ matrix:
         <<: *linux
         env: CONAN_CLANG_VERSIONS=9 CONAN_DOCKER_IMAGE=conanio/clang9
 
-import: bincrafters/templates:.ci/travis-macos.yml@master
+import: bincrafters/templates:.ci/travis-macos.yml@12f4883f65fcbc521d7425636083ce9bba4be5cd
